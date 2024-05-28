@@ -4,7 +4,6 @@
 #include "cistercian.h"
 
 #include QMK_KEYBOARD_H
-#include <inttypes.h>
 #include "progmem.h"
 
 #define CISTERCIAN_STROKE_ROW_ORIGIN_MASK 0x80

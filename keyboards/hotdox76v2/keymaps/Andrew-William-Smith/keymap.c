@@ -284,6 +284,15 @@ void housekeeping_task_user(void)
     break;                                           \
   }
 
+#define HD_SEND_PREFIX_STRING(KEYCODE, PREFIX, STR)       \
+  case (KEYCODE): {                                       \
+    if (record->event.pressed) {                          \
+      if (mods & MOD_MASK_SHIFT) { SEND_STRING(PREFIX); } \
+      SEND_STRING(STR);                                   \
+    }                                                     \
+    break;                                                \
+  }
+
 #define HD_SEND_SLACK_STRING(KEYCODE, STR)                               \
   case (KEYCODE): {                                                      \
     if (!record->event.pressed) { break; }                               \
@@ -327,14 +336,15 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record)
   bool handle_default = false;
   switch (keycode) {
     HD_SEND_STRING(HD_DCLN, "::")
-    HD_SEND_STRING(HD_I8,   "int8_t")
-    HD_SEND_STRING(HD_I16,  "int16_t")
-    HD_SEND_STRING(HD_I32,  "int32_t")
-    HD_SEND_STRING(HD_I64,  "int64_t")
     HD_SEND_STRING(HD_SIZE, "size_t")
     HD_SEND_STRING(HD_STD,  "std::")
     HD_SEND_STRING(HD_000,  "000")
     HD_SEND_STRING(HD_HEX,  "0x")
+
+    HD_SEND_PREFIX_STRING(HD_I8,  "u", "int8_t")
+    HD_SEND_PREFIX_STRING(HD_I16, "u", "int16_t")
+    HD_SEND_PREFIX_STRING(HD_I32, "u", "int32_t")
+    HD_SEND_PREFIX_STRING(HD_I64, "u", "int64_t")
 
     HD_SEND_SLACK_STRING(HD_ACK,  ":ack:")
     HD_SEND_SLACK_STRING(HD_THUP, ":+1:")
@@ -385,6 +395,8 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record)
   return handle_default;
 }
 
+#undef HD_SEND_SLACK_STRING
+#undef HD_SEND_PREFIX_STRING
 #undef HD_SEND_STRING
 
 bool oled_task_user(void)
